@@ -12,7 +12,7 @@ See the Mulan PSL v2 for more details. */
 
 LRUReplacer::LRUReplacer(size_t num_pages) { max_size_ = num_pages; }
 
-LRUReplacer::~LRUReplacer() = default;  
+LRUReplacer::~LRUReplacer() = default;
 
 /**
  * @description: 使用LRU策略删除一个victim frame，并返回该frame的id
@@ -27,8 +27,12 @@ bool LRUReplacer::victim(frame_id_t* frame_id) {
     // Todo:
     //  利用lru_replacer中的LRUlist_,LRUHash_实现LRU策略
     //  选择合适的frame指定为淘汰页面,赋值给*frame_id
-
-    return true;
+    if (LRUlist_.size() != 0) {
+        *frame_id = LRUlist_.back();
+        LRUlist_.pop_back();
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -40,6 +44,7 @@ void LRUReplacer::pin(frame_id_t frame_id) {
     // Todo:
     // 固定指定id的frame
     // 在数据结构中移除该frame
+    LRUlist_.remove(frame_id);
 }
 
 /**
@@ -50,6 +55,18 @@ void LRUReplacer::unpin(frame_id_t frame_id) {
     // Todo:
     //  支持并发锁
     //  选择一个frame取消固定
+    bool exist = false;
+    latch_.lock();
+    for (auto it = LRUlist_.begin(); it != LRUlist_.end(); it++) {
+        if (*it == frame_id) {
+            exist = true;
+            break;
+        }
+    }
+    if (!exist) {
+        LRUlist_.push_front(frame_id);
+    }
+    latch_.unlock();
 }
 
 /**
