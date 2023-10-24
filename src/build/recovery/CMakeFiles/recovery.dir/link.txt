@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc librecovery.a CMakeFiles/recovery.dir/log_manager.obj CMakeFiles/recovery.dir/log_recovery.obj
+C:\mingw64\bin\ranlib.exe librecovery.a

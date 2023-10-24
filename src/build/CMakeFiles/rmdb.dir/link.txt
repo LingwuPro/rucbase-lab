@@ -1,0 +1,3 @@
+D:\Python3.10\Lib\site-packages\cmake\data\bin\cmake.exe -E rm -f CMakeFiles\rmdb.dir/objects.a
+C:\mingw64\bin\ar.exe qc CMakeFiles\rmdb.dir/objects.a @CMakeFiles\rmdb.dir\objects1.rsp
+C:\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\rmdb.dir/objects.a -Wl,--no-whole-archive -o rmdb.exe -Wl,--out-implib,librmdb.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\rmdb.dir\linklibs.rsp

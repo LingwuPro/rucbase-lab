@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc libanalyze.a CMakeFiles/analyze.dir/analyze.obj
+C:\mingw64\bin\ranlib.exe libanalyze.a
