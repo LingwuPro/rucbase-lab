@@ -1,0 +1,4 @@
+E:/VsCodeDocument/Lab/rucbase-lab/src/record/build/CMakeFiles/record.dir
+E:/VsCodeDocument/Lab/rucbase-lab/src/record/build/CMakeFiles/records.dir
+E:/VsCodeDocument/Lab/rucbase-lab/src/record/build/CMakeFiles/edit_cache.dir
+E:/VsCodeDocument/Lab/rucbase-lab/src/record/build/CMakeFiles/rebuild_cache.dir

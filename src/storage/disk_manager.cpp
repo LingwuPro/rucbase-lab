@@ -137,11 +137,12 @@ int DiskManager::open_file(const std::string &path) {
     // Todo:
     // 调用open()函数，使用O_RDWR模式
     // 注意不能重复打开相同文件，并且需要更新文件打开列表
+    if (!is_file(path)) throw FileNotFoundError("DiskManager::open_file Error");
     if (path2fd_.find(path) != path2fd_.end()) throw FileExistsError("DiskManager::open_file Error");
     int fd = open(path.c_str(), O_RDWR);
     if (fd == -1) throw InternalError("DiskManager::open_file Error");
-    path2fd_[path] = fd;
-    fd2path_[fd] = path;
+    path2fd_.insert(std::make_pair(path, fd));
+    fd2path_.insert(std::make_pair(fd, path));
     return fd;
 }
 
@@ -153,12 +154,13 @@ void DiskManager::close_file(int fd) {
     // Todo:
     // 调用close()函数
     // 注意不能关闭未打开的文件，并且需要更新文件打开列表
-    if (fd2path_.find(fd) == fd2path_.end()) throw FileNotOpenError(fd);
-    int mark = close(fd);
-    if (mark < 0) throw InternalError("DiskManager::close_file Error");
-    std::string path = fd2path_[fd];
-    fd2path_.erase(fd);
-    path2fd_.erase(path);
+    if (fd2path_.find(fd) == fd2path_.end())
+        throw InternalError("DiskManager::close_file Error");
+    else {
+        path2fd_.erase(fd2path_.at(fd));
+        fd2path_.erase(fd);
+        close(fd);
+    }
 }
 
 /**

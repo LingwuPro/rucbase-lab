@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc libexecution.a CMakeFiles/execution.dir/execution_manager.obj
+C:\mingw64\bin\ranlib.exe libexecution.a

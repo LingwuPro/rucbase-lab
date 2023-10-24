@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc libstorage.a CMakeFiles/storage.dir/disk_manager.obj CMakeFiles/storage.dir/buffer_pool_manager.obj CMakeFiles/storage.dir/__/replacer/lru_replacer.obj
+C:\mingw64\bin\ranlib.exe libstorage.a

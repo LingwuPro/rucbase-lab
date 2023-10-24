@@ -1,4 +1,10 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+cmake_policy(SET CMP0079 NEW)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+
 
 add_subdirectory(analyze)
 add_subdirectory(record)

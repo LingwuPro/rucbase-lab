@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc librecord.a CMakeFiles/record.dir/rm_file_handle.obj CMakeFiles/record.dir/rm_scan.obj
+C:\mingw64\bin\ranlib.exe librecord.a

@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc libtransaction.a CMakeFiles/transaction.dir/concurrency/lock_manager.obj CMakeFiles/transaction.dir/transaction_manager.obj
+C:\mingw64\bin\ranlib.exe libtransaction.a

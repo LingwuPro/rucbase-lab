@@ -1,0 +1,13 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/record.dir/rm_file_handle.obj"
+  "CMakeFiles/record.dir/rm_file_handle.obj.d"
+  "CMakeFiles/record.dir/rm_scan.obj"
+  "CMakeFiles/record.dir/rm_scan.obj.d"
+  "librecord.a"
+  "librecord.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/record.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

@@ -1,0 +1,2 @@
+C:\mingw64\bin\ar.exe qc libsystem.a CMakeFiles/system.dir/sm_manager.obj
+C:\mingw64\bin\ranlib.exe libsystem.a
