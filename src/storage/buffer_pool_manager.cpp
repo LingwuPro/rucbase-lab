@@ -43,7 +43,8 @@ void BufferPoolManager::update_page(Page* page, PageId new_page_id, frame_id_t n
         disk_manager_->write_page(page->id_.fd, page->id_.page_no, page->data_, PAGE_SIZE);
     }
     page_table_.erase(page->id_);
-    page_table_.insert(std::make_pair(new_page_id, new_frame_id));
+    page_table_[new_page_id] = new_frame_id;
+
     page->id_ = new_page_id;
     page->reset_memory();
 }
@@ -75,12 +76,17 @@ Page* BufferPoolManager::fetch_page(PageId page_id) {
         return page;
     }
     frame_id_t frame_id;
-    if (!find_victim_page(&frame_id)) return nullptr;
+
+    bool success = find_victim_page(&frame_id);
+    if (!success) return nullptr;
+
     Page* page_ptr = &pages_[frame_id];
     update_page(page_ptr, page_id, frame_id);
+
     disk_manager_->read_page(page_id.fd, page_id.page_no, page_ptr->data_, PAGE_SIZE);
     replacer_->pin(frame_id);
-    page_ptr->pin_count_ = 1;
+    page_ptr->pin_count_++;
+
     return page_ptr;
 }
 
@@ -102,14 +108,28 @@ bool BufferPoolManager::unpin_page(PageId page_id, bool is_dirty) {
     // 3 根据参数is_dirty，更改P的is_dirty_
     // 4 返回true
     std::scoped_lock lock{latch_};
-    auto it = page_table_.find(page_id);
-    if (it == page_table_.end()) return false;
-    frame_id_t frame_id = it->second;
-    Page* page = &pages_[frame_id];
-    if (page->pin_count_ <= 0) return false;
-    page->pin_count_--;
-    if (page->pin_count_ == 0) replacer_->unpin(frame_id);
-    if (is_dirty) page->is_dirty_ = true;
+
+    if (!page_table_.count(page_id)) {
+        return false;
+    }
+
+    int frame_id = page_table_[page_id];
+    if (pages_[frame_id].pin_count_ <= 0) {
+        return false;
+    }
+
+    if (is_dirty) {
+        pages_[frame_id].is_dirty_ = true;
+    }
+
+    if (pages_[frame_id].pin_count_ > 0) {
+        pages_[frame_id].pin_count_--;
+        is_dirty = true;
+        if (!pages_[frame_id].pin_count_) {
+            replacer_->unpin(frame_id);
+        }
+    }
+
     return true;
 }
 
@@ -127,12 +147,15 @@ bool BufferPoolManager::flush_page(PageId page_id) {
     // 3. 更新P的is_dirty_
     // 4. 返回true
     std::scoped_lock lock{latch_};
+
+    if (page_id.page_no == INVALID_PAGE_ID) return false;
     auto it = page_table_.find(page_id);
     if (it == page_table_.end()) return false;
     frame_id_t frame_id = it->second;
     Page* page = &pages_[frame_id];
     disk_manager_->write_page(page_id.fd, page_id.page_no, page->data_, PAGE_SIZE);
-    page->is_dirty_ = false;
+    // std::cout << "flush page" << std::endl;
+    pages_[frame_id].is_dirty_ = false;
 
     return true;
 }
@@ -150,16 +173,16 @@ Page* BufferPoolManager::new_page(PageId* page_id) {
     // 5.   返回获得的page
     std::scoped_lock lock{latch_};
 
+    int fd = page_id->fd;
     frame_id_t frame_id;
-
-    if (!find_victim_page(&frame_id)) return nullptr;
-
-    page_id->page_no = disk_manager_->allocate_page(page_id->fd);
+    bool flag = find_victim_page(&frame_id);
+    if (!flag) return nullptr;
+    page_id->page_no = disk_manager_->allocate_page(fd);
     Page* page = &pages_[frame_id];
     update_page(page, *page_id, frame_id);
     replacer_->pin(frame_id);
-    page->pin_count_ = 1;
-
+    pages_[frame_id].pin_count_++;
+    page->reset_memory();
     return page;
 }
 
@@ -174,16 +197,25 @@ bool BufferPoolManager::delete_page(PageId page_id) {
     // 3.   将目标页数据写回磁盘，从页表中删除目标页，重置其元数据，将其加入free_list_，返回true
     std::scoped_lock lock{latch_};
 
-    auto target = page_table_.find(page_id);
-    if (target == page_table_.end()) return true;
-    frame_id_t frame_id = target->second;
+    if (!page_table_.count(page_id)) {
+        return true;
+    }
 
-    Page* page_ptr = &pages_[frame_id];
-    if (page_ptr->pin_count_) return false;
-    disk_manager_->deallocate_page(page_id.page_no);
-    page_id.page_no = INVALID_PAGE_ID;
-    update_page(page_ptr, page_id, frame_id);
-    free_list_.push_back(frame_id);
+    int frame_id = page_table_[page_id];
+
+    if (pages_[frame_id].pin_count_) {
+        return false;
+    }
+
+    disk_manager_->write_page(pages_[frame_id].id_.fd, pages_[frame_id].id_.page_no, pages_[frame_id].get_data(),
+                              PAGE_SIZE);
+    page_table_.erase(page_id);
+    pages_[frame_id].is_dirty_ = false;
+    pages_[frame_id].id_.fd = -1;
+    pages_[frame_id].id_.page_no = INVALID_PAGE_ID;
+    pages_[frame_id].reset_memory();
+
+    free_list_.emplace_back(frame_id);
 
     return true;
 }

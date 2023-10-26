@@ -21,12 +21,9 @@ std::unique_ptr<RmRecord> RmFileHandle::get_record(const Rid& rid, Context* cont
     // 1. 获取指定记录所在的page handle
     // 2. 初始化一个指向RmRecord的指针（赋值其内部的data和size）
     // 加锁
-    auto record = std::make_unique<RmRecord>(file_hdr_.record_size);
-    RmPageHandle page_handle = fetch_page_handle(rid.page_no);
-    char* slot = page_handle.get_slot(rid.slot_no);
-    memcpy(record->data, slot, file_hdr_.record_size);
-    record->size = file_hdr_.record_size;
-    return record;
+    RmPageHandle gr_tmp_page_handle = fetch_page_handle(rid.page_no);
+    std::unique_ptr<RmRecord> uptr(new RmRecord(file_hdr_.record_size, gr_tmp_page_handle.get_slot(rid.slot_no)));
+    return uptr;
 }
 
 /**
@@ -83,6 +80,7 @@ void RmFileHandle::delete_record(const Rid& rid, Context* context) {
     // 放入锁集
     LockDataId lock_data_id = LockDataId{fd_, rid, LockDataType::RECORD};
     pagehandle.page_hdr->num_records--;
+    return;
 }
 
 /**
@@ -101,6 +99,7 @@ void RmFileHandle::update_record(const Rid& rid, char* buf, Context* context) {
     memcpy(slot, buf, file_hdr_.record_size);
     // 放入锁集
     LockDataId lock_data_id = LockDataId{fd_, rid, LockDataType::RECORD};
+    return;
 }
 
 /**
@@ -115,9 +114,10 @@ RmPageHandle RmFileHandle::fetch_page_handle(int page_no) const {
     // Todo:
     // 使用缓冲池获取指定页面，并生成page_handle返回给上层
     // if page_no is invalid, throw PageNotExistError exception
-    Page* page = buffer_pool_manager_->fetch_page({fd_, page_no});
-    if (page == nullptr) throw PageNotExistError("", page_no);
-    return RmPageHandle(&file_hdr_, page);
+    PageId fph_tmp_page_id = {fd_, page_no};
+    Page* fph_tmp_page = buffer_pool_manager_->fetch_page(fph_tmp_page_id);
+    RmPageHandle fph_tmp_page_handle(&file_hdr_, fph_tmp_page);
+    return fph_tmp_page_handle;
 }
 
 /**
