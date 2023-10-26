@@ -329,12 +329,12 @@ transaction/clean: transaction/CMakeFiles/transaction.dir/clean
 
 # All Build rule for target.
 CMakeFiles/rmdb.dir/all: analyze/CMakeFiles/analyze.dir/all
-CMakeFiles/rmdb.dir/all: execution/CMakeFiles/execution.dir/all
 CMakeFiles/rmdb.dir/all: record/CMakeFiles/record.dir/all
 CMakeFiles/rmdb.dir/all: index/CMakeFiles/index.dir/all
-CMakeFiles/rmdb.dir/all: storage/CMakeFiles/storage.dir/all
+CMakeFiles/rmdb.dir/all: execution/CMakeFiles/execution.dir/all
 CMakeFiles/rmdb.dir/all: parser/CMakeFiles/parser.dir/all
 CMakeFiles/rmdb.dir/all: optimizer/CMakeFiles/planner.dir/all
+CMakeFiles/rmdb.dir/all: storage/CMakeFiles/storage.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\rmdb.dir\build.make CMakeFiles/rmdb.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\rmdb.dir\build.make CMakeFiles/rmdb.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=E:\VsCodeDocument\Lab\rucbase-lab\src\build\CMakeFiles --progress-num=44,45 "Built target rmdb"
@@ -518,9 +518,9 @@ execution/CMakeFiles/execution.dir/clean:
 # Target rules for target parser/CMakeFiles/parser.dir
 
 # All Build rule for target.
-parser/CMakeFiles/parser.dir/all: execution/CMakeFiles/execution.dir/all
 parser/CMakeFiles/parser.dir/all: record/CMakeFiles/record.dir/all
 parser/CMakeFiles/parser.dir/all: index/CMakeFiles/index.dir/all
+parser/CMakeFiles/parser.dir/all: execution/CMakeFiles/execution.dir/all
 parser/CMakeFiles/parser.dir/all: storage/CMakeFiles/storage.dir/all
 	$(MAKE) $(MAKESILENT) -f parser\CMakeFiles\parser.dir\build.make parser/CMakeFiles/parser.dir/depend
 	$(MAKE) $(MAKESILENT) -f parser\CMakeFiles\parser.dir\build.make parser/CMakeFiles/parser.dir/build
@@ -547,11 +547,11 @@ parser/CMakeFiles/parser.dir/clean:
 # Target rules for target parser/CMakeFiles/test_parser.dir
 
 # All Build rule for target.
-parser/CMakeFiles/test_parser.dir/all: execution/CMakeFiles/execution.dir/all
 parser/CMakeFiles/test_parser.dir/all: record/CMakeFiles/record.dir/all
 parser/CMakeFiles/test_parser.dir/all: index/CMakeFiles/index.dir/all
-parser/CMakeFiles/test_parser.dir/all: storage/CMakeFiles/storage.dir/all
+parser/CMakeFiles/test_parser.dir/all: execution/CMakeFiles/execution.dir/all
 parser/CMakeFiles/test_parser.dir/all: parser/CMakeFiles/parser.dir/all
+parser/CMakeFiles/test_parser.dir/all: storage/CMakeFiles/storage.dir/all
 	$(MAKE) $(MAKESILENT) -f parser\CMakeFiles\test_parser.dir\build.make parser/CMakeFiles/test_parser.dir/depend
 	$(MAKE) $(MAKESILENT) -f parser\CMakeFiles\test_parser.dir\build.make parser/CMakeFiles/test_parser.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=E:\VsCodeDocument\Lab\rucbase-lab\src\build\CMakeFiles --progress-num=52,53 "Built target test_parser"

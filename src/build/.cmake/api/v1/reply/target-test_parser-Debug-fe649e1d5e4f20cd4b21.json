@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "rmdb.exe"
+			"path" : "parser/test_parser.exe"
 		},
 		{
-			"path" : "rmdb.pdb"
+			"path" : "parser/test_parser.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -19,11 +19,12 @@
 		],
 		"files" : 
 		[
-			"CMakeLists.txt",
+			"parser/CMakeLists.txt",
 			"execution/CMakeLists.txt",
 			"transaction/CMakeLists.txt",
 			"system/CMakeLists.txt",
-			"record/CMakeLists.txt"
+			"record/CMakeLists.txt",
+			"CMakeLists.txt"
 		],
 		"nodes" : 
 		[
@@ -33,13 +34,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 26,
+				"line" : 12,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 27,
+				"line" : 13,
 				"parent" : 0
 			},
 			{
@@ -79,10 +80,13 @@
 				"parent" : 9
 			},
 			{
+				"file" : 5
+			},
+			{
 				"command" : 2,
-				"file" : 0,
+				"file" : 5,
 				"line" : 1,
-				"parent" : 0
+				"parent" : 11
 			}
 		]
 	},
@@ -98,7 +102,7 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 11,
+					"backtrace" : 12,
 					"path" : "E:/VsCodeDocument/Lab/rucbase-lab/src"
 				}
 			],
@@ -113,14 +117,6 @@
 	[
 		{
 			"backtrace" : 2,
-			"id" : "analyze::@635d30d8a935a5020212"
-		},
-		{
-			"backtrace" : 2,
-			"id" : "execution::@564e8e27056fed0e128f"
-		},
-		{
-			"backtrace" : 2,
 			"id" : "record::@a3c2e5c85d7550b80afd"
 		},
 		{
@@ -129,7 +125,7 @@
 		},
 		{
 			"backtrace" : 2,
-			"id" : "storage::@78361d3913668f02dc91"
+			"id" : "execution::@564e8e27056fed0e128f"
 		},
 		{
 			"backtrace" : 2,
@@ -137,10 +133,10 @@
 		},
 		{
 			"backtrace" : 2,
-			"id" : "planner::@0a55ae25571ad925f308"
+			"id" : "storage::@78361d3913668f02dc91"
 		}
 	],
-	"id" : "rmdb::@6890427a1f51a3e7e1df",
+	"id" : "test_parser::@72798c8d109b1720528b",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -155,86 +151,66 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "parser\\libparser.a",
+				"fragment" : "libparser.a",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 2,
-				"fragment" : "execution\\libexecution.a",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "-lreadline",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "-lpthread",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "optimizer\\libplanner.a",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "analyze\\libanalyze.a",
+				"backtrace" : 0,
+				"fragment" : "..\\execution\\libexecution.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "system\\libsystem.a",
+				"fragment" : "..\\system\\libsystem.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "record\\librecord.a",
+				"fragment" : "..\\record\\librecord.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "transaction\\libtransaction.a",
+				"fragment" : "..\\transaction\\libtransaction.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 6,
-				"fragment" : "recovery\\librecovery.a",
+				"fragment" : "..\\recovery\\librecovery.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "system\\libsystem.a",
+				"fragment" : "..\\system\\libsystem.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "record\\librecord.a",
+				"fragment" : "..\\record\\librecord.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "transaction\\libtransaction.a",
+				"fragment" : "..\\transaction\\libtransaction.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 6,
-				"fragment" : "recovery\\librecovery.a",
+				"fragment" : "..\\recovery\\librecovery.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 8,
-				"fragment" : "index\\libindex.a",
+				"fragment" : "..\\index\\libindex.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 10,
-				"fragment" : "storage\\libstorage.a",
+				"fragment" : "..\\storage\\libstorage.a",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 2,
+				"backtrace" : 0,
 				"fragment" : "-lpthread",
 				"role" : "libraries"
 			},
@@ -245,12 +221,12 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "rmdb",
-	"nameOnDisk" : "rmdb.exe",
+	"name" : "test_parser",
+	"nameOnDisk" : "test_parser.exe",
 	"paths" : 
 	{
-		"build" : ".",
-		"source" : "."
+		"build" : "parser",
+		"source" : "parser"
 	},
 	"sourceGroups" : 
 	[
@@ -267,7 +243,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "rmdb.cpp",
+			"path" : "parser/test_parser.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],
