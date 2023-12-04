@@ -9,7 +9,6 @@ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details. */
 
 #include "ix_index_handle.h"
-
 #include "ix_scan.h"
 
 /**
@@ -110,6 +109,7 @@ void IxNodeHandle::insert_pairs(int pos, const char *key, const Rid *rid, int n)
     char *key_pos = get_key(pos);
     Rid *rid_pos = get_rid(pos);
     for (auto len : file_hdr->col_lens_) {
+        // int len = file_hdr->col_lens_[0];
         memmove(key_pos + n * len, key_pos, (get_size() - pos) * len);
         memcpy(key_pos, key, n * len);
         memmove(rid_pos + n, rid_pos, (get_size() - pos) * sizeof(Rid));
@@ -213,8 +213,10 @@ std::pair<IxNodeHandle *, bool> IxIndexHandle::find_leaf_page(const char *key, O
     }
     // 现在它是叶子节点了
     //  transaction->AddIntoPageSet(buffer_pool_manager_->FetchPage(now->GetPageId()));
-
+    // 如果是删除操作,就要加锁
     return std::make_pair(now, true);
+
+    // return std::make_pair(nullptr, false);
 }
 
 /**

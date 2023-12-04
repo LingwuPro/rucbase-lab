@@ -8,9 +8,9 @@
 #include "index/ix.h"
 #undef private  // for use private variables in "ix.h"
 
+#include "record/rm.h"
 #include "storage/buffer_pool_manager.h"
 #include "system/sm.h"
-#include "record/rm.h"
 const std::string TEST_DB_NAME = "BPlusTreeInsertTest_db";  // 以数据库名作为根目录
 const std::string TEST_FILE_NAME = "table1";                // 测试文件名的前缀
 // const int index_no = 0;                                     // 索引编号
@@ -42,25 +42,26 @@ class BPlusTreeTests : public ::testing::Test {
         ix_manager_ = std::make_unique<IxManager>(disk_manager_.get(), buffer_pool_manager_.get());
         txn_ = std::make_unique<Transaction>(0);
         rm_ = std::make_unique<RmManager>(disk_manager_.get(), buffer_pool_manager_.get());
-        sm_ = std::make_unique<SmManager>(disk_manager_.get(), buffer_pool_manager_.get(), rm_.get(), ix_manager_.get());
+        sm_ =
+            std::make_unique<SmManager>(disk_manager_.get(), buffer_pool_manager_.get(), rm_.get(), ix_manager_.get());
 
         // 如果测试目录不存在，则先创建测试目录
         if (disk_manager_->is_dir(TEST_DB_NAME)) {
             std::string cmd = "rm -rf " + TEST_DB_NAME;
-            if (system(cmd.c_str()) < 0) {  
+            if (system(cmd.c_str()) < 0) {
                 throw UnixError();
             }
         }
         sm_->create_db(TEST_DB_NAME);
-        // assert(disk_manager_->is_dir(TEST_DB_NAME));
+        assert(disk_manager_->is_dir(TEST_DB_NAME));
         // 进入测试目录
-        // if (chdir(TEST_DB_NAME.c_str()) < 0) {
-        //     throw UnixError();
-        // }
+        if (chdir(TEST_DB_NAME.c_str()) < 0) {
+            throw UnixError();
+        }
         // 如果测试文件存在，则先删除原文件（最后留下来的文件存的是最后一个测试点的数据）
-        // if (ix_manager_->exists(TEST_FILE_NAME, TEST_COL)) {
-        //     ix_manager_->destroy_index(TEST_FILE_NAME, TEST_COL);
-        // }
+        if (ix_manager_->exists(TEST_FILE_NAME, TEST_COL)) {
+            ix_manager_->destroy_index(TEST_FILE_NAME, TEST_COL);
+        }
         std::vector<ColDef> coldef;
         coldef.push_back({"col1", TYPE_INT, 4});
         coldef.push_back({"col2", TYPE_INT, 4});
@@ -69,6 +70,7 @@ class BPlusTreeTests : public ::testing::Test {
         assert(ix_manager_->exists(TEST_FILE_NAME, TEST_COL));
         // 打开测试文件
         ih_ = ix_manager_->open_index(TEST_FILE_NAME, TEST_COL);
+        std::cout << ih_->fd_;
         assert(ih_ != nullptr);
     }
 
@@ -101,7 +103,7 @@ class BPlusTreeTests : public ::testing::Test {
                 << "max_size=" << leaf->get_max_size() << ",min_size=" << leaf->get_min_size() << "</TD></TR>\n";
             out << "<TR>";
             for (int i = 0; i < leaf->get_size(); i++) {
-                out << "<TD>" << *reinterpret_cast<int*>(leaf->get_key(i)) << "</TD>\n";
+                out << "<TD>" << *reinterpret_cast<int *>(leaf->get_key(i)) << "</TD>\n";
             }
             out << "</TR>";
             // Print table end
@@ -110,14 +112,14 @@ class BPlusTreeTests : public ::testing::Test {
             if (leaf->get_next_leaf() != INVALID_PAGE_ID && leaf->get_next_leaf() > 1) {
                 // 注意加上一个大于1的判断条件，否则若GetNextPageNo()是1，会把1那个结点也画出来
                 out << leaf_prefix << leaf->get_page_no() << " -> " << leaf_prefix << leaf->get_next_leaf() << ";\n";
-                out << "{rank=same " << leaf_prefix << leaf->get_page_no() << " " << leaf_prefix << leaf->get_next_leaf()
-                    << "};\n";
+                out << "{rank=same " << leaf_prefix << leaf->get_page_no() << " " << leaf_prefix
+                    << leaf->get_next_leaf() << "};\n";
             }
 
             // Print parent links if there is a parent
             if (leaf->get_parent_page_no() != INVALID_PAGE_ID) {
-                out << internal_prefix << leaf->get_parent_page_no() << ":p" << leaf->get_page_no() << " -> " << leaf_prefix
-                    << leaf->get_page_no() << ";\n";
+                out << internal_prefix << leaf->get_parent_page_no() << ":p" << leaf->get_page_no() << " -> "
+                    << leaf_prefix << leaf->get_page_no() << ";\n";
             }
         } else {
             IxNodeHandle *inner = node;
@@ -176,7 +178,7 @@ class BPlusTreeTests : public ::testing::Test {
     void Draw(BufferPoolManager *bpm, const std::string &outf) {
         std::ofstream out(outf);
         out << "digraph G {" << std::endl;
-        
+
         IxNodeHandle *node = ih_->fetch_node(ih_->file_hdr_->root_page_);
         ToGraph(ih_.get(), node, bpm, out);
         out << "}" << std::endl;
@@ -229,7 +231,7 @@ class BPlusTreeTests : public ::testing::Test {
             buffer_pool_manager_->unpin_page(node->get_page_id(), false);
             return;
         }
-        for (int i = 0; i < node->get_size(); i++) {                 // 遍历node的所有孩子
+        for (int i = 0; i < node->get_size(); i++) {                  // 遍历node的所有孩子
             IxNodeHandle *child = ih->fetch_node(node->value_at(i));  // 第i个孩子
             // check parent
             assert(child->get_parent_page_no() == now_page_no);
@@ -302,13 +304,12 @@ class BPlusTreeTests : public ::testing::Test {
         ASSERT_EQ(scan.is_end(), true);
         ASSERT_EQ(it, mock.end());
     }
-
 };
 
 /**
  * @brief 插入10个key，范围为1~10，插入的value取key的低32位，使用GetValue()函数测试插入的value(即Rid)是否正确
  * 每次插入后都会调用Draw()函数生成一个B+树的图
- * 
+ *
  * @note lab2 计分：10 points
  */
 TEST_F(BPlusTreeTests, InsertTest) {
@@ -357,7 +358,7 @@ TEST_F(BPlusTreeTests, InsertTest) {
 
 /**
  * @brief 随机插入1~10000
- * 
+ *
  * @note lab2 计分：20 points
  */
 TEST_F(BPlusTreeTests, LargeScaleTest) {
