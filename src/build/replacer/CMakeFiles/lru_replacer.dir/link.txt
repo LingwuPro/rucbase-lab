@@ -1,2 +1,0 @@
-C:\mingw64\bin\ar.exe qc liblru_replacer.a CMakeFiles/lru_replacer.dir/lru_replacer.obj
-C:\mingw64\bin\ranlib.exe liblru_replacer.a

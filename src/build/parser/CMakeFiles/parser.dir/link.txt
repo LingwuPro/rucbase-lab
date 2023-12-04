@@ -1,2 +1,0 @@
-C:\mingw64\bin\ar.exe qc libparser.a CMakeFiles/parser.dir/yacc.tab.obj CMakeFiles/parser.dir/lex.yy.obj CMakeFiles/parser.dir/ast.obj
-C:\mingw64\bin\ranlib.exe libparser.a

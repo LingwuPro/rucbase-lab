@@ -1,2 +1,0 @@
-C:\mingw64\bin\ar.exe qc libindex.a CMakeFiles/index.dir/ix_index_handle.obj CMakeFiles/index.dir/ix_scan.obj
-C:\mingw64\bin\ranlib.exe libindex.a

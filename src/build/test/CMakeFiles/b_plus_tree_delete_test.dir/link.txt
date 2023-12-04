@@ -1,3 +1,0 @@
-D:\Python3.10\Lib\site-packages\cmake\data\bin\cmake.exe -E rm -f CMakeFiles\b_plus_tree_delete_test.dir/objects.a
-C:\mingw64\bin\ar.exe qc CMakeFiles\b_plus_tree_delete_test.dir/objects.a @CMakeFiles\b_plus_tree_delete_test.dir\objects1.rsp
-C:\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\b_plus_tree_delete_test.dir/objects.a -Wl,--no-whole-archive -o b_plus_tree_delete_test.exe -Wl,--out-implib,libb_plus_tree_delete_test.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\b_plus_tree_delete_test.dir\linklibs.rsp

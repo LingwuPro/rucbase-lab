@@ -58,7 +58,17 @@ Rid RmFileHandle::insert_record(char* buf, Context* context) {
  * @param {Rid&} rid 要插入记录的位置
  * @param {char*} buf 要插入记录的数据
  */
-void RmFileHandle::insert_record(const Rid& rid, char* buf) {}
+void RmFileHandle::insert_record(const Rid& rid, char* buf) {
+    auto target_page_handle = fetch_page_handle(rid.page_no);
+    int slot_no = Bitmap::first_bit(false, target_page_handle.bitmap, file_hdr_.num_records_per_page);
+    char* slot = target_page_handle.get_slot(slot_no);
+    memcpy(slot, buf, file_hdr_.record_size);
+    Bitmap::set(target_page_handle.bitmap, slot_no);
+    target_page_handle.page_hdr->num_records++;
+    if (target_page_handle.page_hdr->num_records == file_hdr_.num_records_per_page) {
+        file_hdr_.first_free_page_no = target_page_handle.page_hdr->next_free_page_no;
+    }
+}
 
 /**
  * @description: 删除记录文件中记录号为rid的记录
@@ -113,7 +123,6 @@ void RmFileHandle::update_record(const Rid& rid, char* buf, Context* context) {
 RmPageHandle RmFileHandle::fetch_page_handle(int page_no) const {
     // Todo:
     // 使用缓冲池获取指定页面，并生成page_handle返回给上层
-    // if page_no is invalid, throw PageNotExistError exception
     PageId fph_tmp_page_id = {fd_, page_no};
     Page* fph_tmp_page = buffer_pool_manager_->fetch_page(fph_tmp_page_id);
     RmPageHandle fph_tmp_page_handle(&file_hdr_, fph_tmp_page);

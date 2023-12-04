@@ -1,3 +1,0 @@
-D:\Python3.10\Lib\site-packages\cmake\data\bin\cmake.exe -E rm -f CMakeFiles\recoverys.dir/objects.a
-C:\mingw64\bin\ar.exe qc CMakeFiles\recoverys.dir/objects.a @CMakeFiles\recoverys.dir\objects1.rsp
-C:\mingw64\bin\g++.exe -g -shared -o librecoverys.dll -Wl,--out-implib,librecoverys.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles\recoverys.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\recoverys.dir\linklibs.rsp
