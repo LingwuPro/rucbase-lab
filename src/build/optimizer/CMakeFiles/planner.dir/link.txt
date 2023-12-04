@@ -1,2 +1,0 @@
-C:\mingw64\bin\ar.exe qc libplanner.a CMakeFiles/planner.dir/planner.obj
-C:\mingw64\bin\ranlib.exe libplanner.a

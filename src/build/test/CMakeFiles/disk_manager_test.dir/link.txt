@@ -1,3 +1,0 @@
-D:\Python3.10\Lib\site-packages\cmake\data\bin\cmake.exe -E rm -f CMakeFiles\disk_manager_test.dir/objects.a
-C:\mingw64\bin\ar.exe qc CMakeFiles\disk_manager_test.dir/objects.a @CMakeFiles\disk_manager_test.dir\objects1.rsp
-C:\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\disk_manager_test.dir/objects.a -Wl,--no-whole-archive -o disk_manager_test.exe -Wl,--out-implib,libdisk_manager_test.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\disk_manager_test.dir\linklibs.rsp
