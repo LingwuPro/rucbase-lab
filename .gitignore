@@ -4,7 +4,8 @@
 
 # macos
 .DS_Store
-
+/BufferPoolManagerTest_db/
+/BPlusTreeInsertTest_db/
 # build
 /build/
 /rucbase_client/build/
