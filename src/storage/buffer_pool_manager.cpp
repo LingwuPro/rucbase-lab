@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -226,6 +227,8 @@ bool BufferPoolManager::delete_page(PageId page_id) {
  * @param {int} fd 文件句柄
  */
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -452,5 +455,8 @@ bool BufferPoolManager::delete_page(PageId page_id) {
  * @description: 将buffer_pool中的所有页写回到磁盘
  * @param {int} fd 文件句柄
  */
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 void BufferPoolManager::flush_all_pages(int fd) {}

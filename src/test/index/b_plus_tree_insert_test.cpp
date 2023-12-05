@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <algorithm>
 #include <cstdio>
 #include <random>  // for std::default_random_engine
@@ -415,6 +416,8 @@ TEST_F(BPlusTreeTests, LargeScaleTest) {
     }
     EXPECT_EQ(current_key, keys.size() + 1);
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 #include <algorithm>
 #include <cstdio>
 #include <random>  // for std::default_random_engine
@@ -830,5 +833,8 @@ TEST_F(BPlusTreeTests, LargeScaleTest) {
         scan.next();
     }
     EXPECT_EQ(current_key, keys.size() + 1);
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 }

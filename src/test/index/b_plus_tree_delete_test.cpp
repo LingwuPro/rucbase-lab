@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <algorithm>
 #include <cstdio>
 #include <random>  // for std::default_random_engine
@@ -493,6 +494,8 @@ TEST_F(BPlusTreeTests, LargeScaleTest) {
     std::cout << "Insert keys count: " << add_cnt << '\n' << "Delete keys count: " << del_cnt << '\n';
     check_all(ih_.get(), mock);
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 #include <algorithm>
 #include <cstdio>
 #include <random>  // for std::default_random_engine
@@ -986,5 +989,8 @@ TEST_F(BPlusTreeTests, LargeScaleTest) {
     }
     std::cout << "Insert keys count: " << add_cnt << '\n' << "Delete keys count: " << del_cnt << '\n';
     check_all(ih_.get(), mock);
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 }

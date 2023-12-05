@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -130,6 +131,8 @@ class SeqScanExecutor : public AbstractExecutor {
     std::string getType() override { return "SeqScanExecutor"; };
     const std::vector<ColMeta> &cols() const override { return cols_; };
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -260,5 +263,8 @@ class SeqScanExecutor : public AbstractExecutor {
     size_t tupleLen() const override { return len_; };
     std::string getType() override { return "SeqScanExecutor"; };
     const std::vector<ColMeta> &cols() const override { return cols_; };
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 };

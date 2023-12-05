@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -73,6 +74,8 @@ bool RmScan::is_end() const {
  * @brief RmScan内部存放的rid
  */
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -146,5 +149,8 @@ bool RmScan::is_end() const {
 /**
  * @brief RmScan内部存放的rid
  */
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 Rid RmScan::rid() const { return rid_; }

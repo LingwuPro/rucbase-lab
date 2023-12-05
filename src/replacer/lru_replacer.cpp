@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -74,6 +75,8 @@ void LRUReplacer::unpin(frame_id_t frame_id) {
  */
 size_t LRUReplacer::Size() { return LRUlist_.size(); }
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 /* Copyright (c) 2023 Renmin University of China
 RMDB is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -148,4 +151,7 @@ void LRUReplacer::unpin(frame_id_t frame_id) {
  * @description: 获取当前replacer中可以被淘汰的页面数量
  */
 size_t LRUReplacer::Size() { return LRUlist_.size(); }
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a

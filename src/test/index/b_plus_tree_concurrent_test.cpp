@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <chrono>  // NOLINT
 #include <cstdio>
 #include <functional>
@@ -464,6 +465,8 @@ TEST_F(BPlusTreeConcurrentTest, MixScaleTest) {
     }
     EXPECT_EQ(size, keys.size() - delete_keys.size());
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 #include <chrono>  // NOLINT
 #include <cstdio>
 #include <functional>
@@ -928,5 +931,8 @@ TEST_F(BPlusTreeConcurrentTest, MixScaleTest) {
         scan.next();
     }
     EXPECT_EQ(size, keys.size() - delete_keys.size());
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 }

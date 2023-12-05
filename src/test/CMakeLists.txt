@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # storage test
 add_executable(disk_manager_test storage/disk_manager_test.cpp)
 target_link_libraries(disk_manager_test storage gtest_main)
@@ -24,6 +25,8 @@ target_link_libraries(b_plus_tree_concurrent_test system index gtest_main)
 
 # query test
 =======
+=======
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 # storage test
 add_executable(disk_manager_test storage/disk_manager_test.cpp)
 target_link_libraries(disk_manager_test storage gtest_main)
@@ -48,5 +51,8 @@ add_executable(b_plus_tree_concurrent_test index/b_plus_tree_concurrent_test.cpp
 target_link_libraries(b_plus_tree_concurrent_test system index gtest_main)
 
 # query test
+<<<<<<< HEAD
+>>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
+=======
 >>>>>>> 0fc62b07da8290e400c2858776d6f0d23f21ae8a
 add_executable(query_test query/query_test.cpp)
