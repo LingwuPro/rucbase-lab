@@ -35,12 +35,7 @@ class SortExecutor : public AbstractExecutor {
 
     void beginTuple() override {}
 
-    void nextTuple() override {
-        // if (prev_->is_end()) {
-        //     return;
-        // }
-        // prev_->nextTuple();
-    }
+    void nextTuple() override {}
 
     std::unique_ptr<RmRecord> Next() override { return nullptr; }
 

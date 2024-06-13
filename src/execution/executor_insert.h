@@ -17,11 +17,11 @@ See the Mulan PSL v2 for more details. */
 
 class InsertExecutor : public AbstractExecutor {
    private:
-    TabMeta tab_;                   // 表的元数据
-    std::vector<Value> values_;     // 需要插入的数据
-    RmFileHandle *fh_;              // 表的数据文件句柄
-    std::string tab_name_;          // 表名称
-    Rid rid_;                       // 插入的位置，由于系统默认插入时不指定位置，因此当前rid_在插入后才赋值
+    TabMeta tab_;                // 表的元数据
+    std::vector<Value> values_;  // 需要插入的数据
+    RmFileHandle *fh_;           // 表的数据文件句柄
+    std::string tab_name_;       // 表名称
+    Rid rid_;  // 插入的位置，由于系统默认插入时不指定位置，因此当前rid_在插入后才赋值
     SmManager *sm_manager_;
 
    public:
@@ -35,6 +35,11 @@ class InsertExecutor : public AbstractExecutor {
         }
         fh_ = sm_manager_->fhs_.at(tab_name).get();
         context_ = context;
+
+        // 加表级写锁
+        if (context) {
+            context_->lock_mgr_->lock_IX_on_table(context->txn_, fh_->GetFd());
+        }
     };
 
     std::unique_ptr<RmRecord> Next() override {
@@ -51,16 +56,18 @@ class InsertExecutor : public AbstractExecutor {
         }
         // Insert into record file
         rid_ = fh_->insert_record(rec.data, context_);
-        
+        // record a insert operation into the transaction
+        WriteRecord *wr = new WriteRecord(WType::INSERT_TUPLE, tab_name_, rid_);
+        context_->txn_->append_write_record(wr);
         // Insert into index
-        for(size_t i = 0; i < tab_.indexes.size(); ++i) {
-            auto& index = tab_.indexes[i];
+        for (size_t i = 0; i < tab_.indexes.size(); ++i) {
+            auto &index = tab_.indexes[i];
             auto ih = sm_manager_->ihs_.at(sm_manager_->get_ix_manager()->get_index_name(tab_name_, index.cols)).get();
-            char* key = new char[index.col_tot_len];
+            char *key = new char[index.col_tot_len];
             int offset = 0;
-            for(size_t i = 0; i < index.col_num; ++i) {
-                memcpy(key + offset, rec.data + index.cols[i].offset, index.cols[i].len);
-                offset += index.cols[i].len;
+            for (int j = 0; j < index.col_num; ++j) {
+                memcpy(key + offset, rec.data + index.cols[j].offset, index.cols[j].len);
+                offset += index.cols[j].len;
             }
             ih->insert_entry(key, rid_, context_->txn_);
         }

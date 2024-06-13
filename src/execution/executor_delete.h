@@ -24,8 +24,6 @@ class DeleteExecutor : public AbstractExecutor {
     std::string tab_name_;          // 表名称
     SmManager *sm_manager_;
 
-    std::vector<ColMeta> cols_;  // 自定义
-
    public:
     DeleteExecutor(SmManager *sm_manager, const std::string &tab_name, std::vector<Condition> conds,
                    std::vector<Rid> rids, Context *context) {
@@ -37,76 +35,34 @@ class DeleteExecutor : public AbstractExecutor {
         rids_ = rids;
         context_ = context;
 
-        cols_ = tab_.cols;
+        // 加表级写锁
+        context_->lock_mgr_->lock_IX_on_table(context->txn_, fh_->GetFd());
     }
 
     std::unique_ptr<RmRecord> Next() override {
-        for (Rid rid : rids_) {          // 扫描记录
-            if (!fh_->is_record(rid)) {  // 无记录扫描下一条
-                continue;
+        for (Rid &rid : rids_) {
+            auto rec = fh_->get_record(rid, context_);
+            // Delete index
+            for (size_t i = 0; i < tab_.indexes.size(); ++i) {
+                auto &index = tab_.indexes[i];
+                auto ih =
+                    sm_manager_->ihs_.at(sm_manager_->get_ix_manager()->get_index_name(tab_name_, index.cols)).get();
+                char *key = new char[index.col_tot_len];
+                int offset = 0;
+                for (int j = 0; j < index.col_num; ++j) {
+                    memcpy(key + offset, rec->data + index.cols[j].offset, index.cols[j].len);
+                    offset += index.cols[j].len;
+                }
+                ih->delete_entry(key, context_->txn_);
             }
-
-            if (!condCheck(fh_->get_record(rid, context_).get())) {  // 记录检查是否符合where语句
-                continue;
-            }
-
-            // 智能指针不能转换为普通指针
+            // Delete record file
             fh_->delete_record(rid, context_);
+            // record a delete operation into the transaction
+            WriteRecord *wr = new WriteRecord(WType::DELETE_TUPLE, tab_name_, rid, *rec);
+            context_->txn_->append_write_record(wr);
         }
         return nullptr;
     }
 
     Rid &rid() override { return _abstract_rid; }
-
-    bool condCheck(const RmRecord *l_record) {
-        char *l_val_buf, *r_val_buf;
-        const RmRecord *r_record;
-
-        for (auto &condition : conds_) {  // 条件判断
-            CompOp op = condition.op;
-            int cmp;
-
-            // record和col确定数据位置
-            auto l_col = get_col(cols_, condition.lhs_col);  // 左列元数据
-            l_val_buf = l_record->data + l_col->offset;      // 确定左数据起点
-
-            if (condition.is_rhs_val) {  // 值
-                r_record = condition.rhs_val.raw.get();
-                r_val_buf = r_record->data;
-
-                cmp = cond_compare(l_val_buf, r_val_buf, condition.rhs_val.type, l_col->len);
-            } else {  // 列
-                auto r_col = get_col(cols_, condition.rhs_col);
-                r_val_buf = l_record->data + r_col->offset;
-
-                cmp = cond_compare(l_val_buf, r_val_buf, r_col->type, l_col->len);
-            }
-            if (!op_compare(op, cmp))  // 不满足条件
-                return false;
-        }
-        return true;
-    }
-
-    int cond_compare(const char *l_val_buf, const char *r_val_buf, ColType type, int col_len) const {
-        int cmp = ix_compare(l_val_buf, r_val_buf, type, col_len);
-        return cmp;
-    }
-
-    bool op_compare(CompOp op, int cmp) const {
-        if (op == OP_EQ) {
-            return cmp == 0;
-        } else if (op == OP_NE) {
-            return cmp != 0;
-        } else if (op == OP_LT) {
-            return cmp < 0;
-        } else if (op == OP_GT) {
-            return cmp > 0;
-        } else if (op == OP_LE) {
-            return cmp <= 0;
-        } else if (op == OP_GE) {
-            return cmp >= 0;
-        } else {
-            throw InternalError("Invalid CompOp");
-        }
-    }
 };

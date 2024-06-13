@@ -23,7 +23,7 @@ enum class TransactionState { DEFAULT, GROWING, SHRINKING, COMMITTED, ABORTED };
 enum class IsolationLevel { READ_UNCOMMITTED, REPEATABLE_READ, READ_COMMITTED, SERIALIZABLE };
 
 /* 事务写操作类型，包括插入、删除、更新三种操作 */
-enum class WType { INSERT_TUPLE = 0, DELETE_TUPLE, UPDATE_TUPLE };
+enum class WType { INSERT_TUPLE = 0, DELETE_TUPLE, UPDATE_TUPLE};
 
 /**
  * @brief 事务的写操作记录，用于事务的回滚
@@ -48,15 +48,6 @@ class WriteRecord {
     WriteRecord(WType wtype, const std::string &tab_name, const Rid &rid, const RmRecord &record)
         : wtype_(wtype), tab_name_(tab_name), rid_(rid), record_(record) {}
 
-    // constructor for insert, delete for index
-    WriteRecord(WType wtype, const Rid &rid, const RmRecord &record, const std::string &index_name)
-        : wtype_(wtype), index_name_(index_name), rid_(rid), record_(record) {}
-
-    // constructor for update for index
-    WriteRecord(WType wtype, const Rid &rid, const RmRecord &old_record, const RmRecord &new_record,
-                const std::string &index_name)
-        : wtype_(wtype), index_name_(index_name), rid_(rid), record_(old_record), updated_record_(new_record) {}
-
     ~WriteRecord() = default;
 
     inline RmRecord &GetRecord() { return record_; }
@@ -70,10 +61,8 @@ class WriteRecord {
    private:
     WType wtype_;
     std::string tab_name_;
-    std::string index_name_;
     Rid rid_;
     RmRecord record_;
-    RmRecord updated_record_;
 };
 
 /* 多粒度锁，加锁对象的类型，包括记录和表 */

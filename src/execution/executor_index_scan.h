@@ -10,6 +10,8 @@ See the Mulan PSL v2 for more details. */
 
 #pragma once
 
+#include <set>
+
 #include "execution_defs.h"
 #include "execution_manager.h"
 #include "executor_abstract.h"
@@ -62,89 +64,86 @@ class IndexScanExecutor : public AbstractExecutor {
             }
         }
         fed_conds_ = conds_;
+        // 扫索引会读部分或全部记录，取排他性最大的S锁
+        if (context) {
+            context_->lock_mgr_->lock_shared_on_table(context->txn_, fh_->GetFd());
+        }
     }
 
     void beginTuple() override {
-        for (auto &cond : fed_conds_) {
-            assert(cond.lhs_col.tab_name == tab_name_);
-            if (!cond.is_rhs_val) {
-                assert(cond.rhs_col.tab_name == tab_name_);
-            }
-        }
+        // index is available, scan index
         auto ih =
             sm_manager_->ihs_.at(sm_manager_->get_ix_manager()->get_index_name(tab_name_, index_col_names_)).get();
         Iid lower = ih->leaf_begin();
         Iid upper = ih->leaf_end();
-        auto index_col_name = sm_manager_->get_ix_manager()->get_index_name(tab_name_, index_col_names_);
-        for (auto &cond : fed_conds_) {
-            if (cond.is_rhs_val && cond.op != OP_NE && cond.lhs_col.col_name == index_col_name) {
-                char *rhs_key = cond.rhs_val.raw->data;
-                if (cond.op == OP_EQ) {
-                    lower = ih->lower_bound(rhs_key);
-                    upper = ih->upper_bound(rhs_key);
-                } else if (cond.op == OP_LT) {
-                    upper = ih->lower_bound(rhs_key);
-                } else if (cond.op == OP_LE) {
-                    upper = ih->upper_bound(rhs_key);
-                } else if (cond.op == OP_GT) {
-                    lower = ih->upper_bound(rhs_key);
-                } else if (cond.op == OP_GE) {
-                    lower = ih->lower_bound(rhs_key);
-                } else {
-                    throw InternalError("Unexpected op type");
+        for (auto &index_col : index_col_names_) {
+            for (auto &cond : fed_conds_) {
+                if (cond.is_rhs_val && cond.op != OP_NE && cond.lhs_col.col_name == index_col) {
+                    // char *key = cond.rhs_val.raw->data;
+                    int offset = 0;
+                    char *key = new char[index_meta_.col_tot_len];
+                    for (size_t i = 0; i < index_meta_.col_num; ++i) {
+                        auto &cond = fed_conds_[i];
+                        auto &col = index_meta_.cols[i];
+                        memcpy(key + offset, cond.rhs_val.raw->data, col.len);
+                        offset += col.len;
+                    }
+                    if (cond.op == OP_EQ) {
+                        lower = ih->lower_bound(key);
+                        upper = ih->upper_bound(key);
+                    } else if (cond.op == OP_LT) {
+                        upper = ih->lower_bound(key);
+                    } else if (cond.op == OP_GT) {
+                        lower = ih->upper_bound(key);
+                    } else if (cond.op == OP_LE) {
+                        upper = ih->upper_bound(key);
+                    } else if (cond.op == OP_GE) {
+                        lower = ih->lower_bound(key);
+                    } else {
+                        throw InternalError("Unexpected op type");
+                    }
+                    break;  // TODO: maintain an interval
                 }
-                break;
             }
         }
+        // lower = ih->lower_bound(key);
+        // upper = ih->upper_bound(key);
         scan_ = std::make_unique<IxScan>(ih, lower, upper, sm_manager_->get_bpm());
         // Get the first record
         while (!scan_->is_end()) {
             rid_ = scan_->rid();
-            try {
-                auto rec = fh_->get_record(rid_, context_);
-                if (eval_conds(cols_, fed_conds_, rec.get())) {
-                    break;
-                }
-            } catch (RecordNotFoundError &e) {
-                std::cerr << e.what() << std::endl;
+            auto rec = fh_->get_record(rid_, context_);
+            if (eval_conds(cols_, fed_conds_, rec.get())) {
+                break;
             }
             scan_->next();
         }
     }
 
     void nextTuple() override {
-        for (auto &cond : fed_conds_) {
-            assert(cond.lhs_col.tab_name == tab_name_);
-            if (!cond.is_rhs_val) {
-                assert(cond.rhs_col.tab_name == tab_name_);
-            }
-        }
         assert(!is_end());
-        // lab3 task2 todo
         // 扫描到下一个满足条件的记录,赋rid_,中止循环
-        // lab3 task2 todo end
-        while (!scan_->is_end()) {
-            scan_->next();
-            if (scan_->is_end()) {
-                break;
-            }
+        for (scan_->next(); !scan_->is_end(); scan_->next()) {
             rid_ = scan_->rid();
             auto rec = fh_->get_record(rid_, context_);
-            if (eval_conds(cols_, fed_conds_, rec.get())) {
-                break;
-            }
+            if (eval_conds(cols_, fed_conds_, rec.get())) break;
         }
     }
 
-    std::unique_ptr<RmRecord> Next() override {
-        if (is_end()) {
-            return nullptr;
-        }
-        auto rec = fh_->get_record(rid_, context_);
-        return rec;
-    }
     bool is_end() const override { return scan_->is_end(); }
+
+    size_t tupleLen() const override { return len_; }
+
+    const std::vector<ColMeta> &cols() const override { return cols_; }
+
+    std::unique_ptr<RmRecord> Next() override {
+        std::cout << "DEBUG:IndexScanExecutor Next" << std::endl;
+        assert(!is_end());
+        return fh_->get_record(rid_, context_);
+    }
+
     Rid &rid() override { return rid_; }
+
     bool eval_cond(const std::vector<ColMeta> &rec_cols, const Condition &cond, const RmRecord *rec) {
         auto lhs_col = get_col(rec_cols, cond.lhs_col);
         char *lhs = rec->data + lhs_col->offset;

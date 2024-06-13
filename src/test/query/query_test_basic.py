@@ -26,13 +26,11 @@ def build():
 
 def run():
     # dir is root/build
-    # os.chdir("../../../")
-
     os.chdir("./build")
     score = 0.0
     
     for i in range(NUM_TESTS):
-        # if i != 2 :
+        # if i == 0 :
         #     continue
         
         test_file = get_test_name(i + 1)
