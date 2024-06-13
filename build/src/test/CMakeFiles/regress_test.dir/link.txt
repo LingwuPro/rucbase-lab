@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wall -O0 -g -ggdb3 CMakeFiles/regress_test.dir/regress/regress_test_main.cpp.o CMakeFiles/regress_test.dir/regress/regress_test.cpp.o -o ../../bin/regress_test 

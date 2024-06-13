@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/rucbase_client.dir/main.cpp.o -o rucbase_client  -lpthread -lreadline 

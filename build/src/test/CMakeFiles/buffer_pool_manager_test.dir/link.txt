@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wall -O0 -g -ggdb3 CMakeFiles/buffer_pool_manager_test.dir/storage/buffer_pool_manager_test.cpp.o -o ../../bin/buffer_pool_manager_test  ../../lib/libstorage.a ../../lib/libgtest_main.a ../../lib/libgtest.a 

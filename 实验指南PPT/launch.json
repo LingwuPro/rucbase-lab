@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "name": "GDB",
+            "program": "${workspaceFolder}/build/bin/rmdb",
+            "args": ["query_test_db"],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false,
+            "arguments": "",
+            "MIMode": "gdb",
+        }
+    ]
+}

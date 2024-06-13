@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../lib/libindex.a CMakeFiles/index.dir/ix_index_handle.cpp.o CMakeFiles/index.dir/ix_scan.cpp.o
+/usr/bin/ranlib ../../lib/libindex.a
